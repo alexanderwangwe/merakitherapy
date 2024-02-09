@@ -1,0 +1,11 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Appointment Detail</h1>
+
+<p>Date: {{ appointment.date }}</p>
+<p>Time: {{ appointment.time }}</p>
+<p>Therapist: {{ appointment.therapist.name }}</p>
+<p>Patient: {{ appointment.patient.name }}</p>
+<p>Status: {{ appointment.status }}</p>
+{% endblock %}

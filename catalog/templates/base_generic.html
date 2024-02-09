@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+WyFro1PTZsQ9L4Hb1mPPRpO2j7b9JqdDzN" crossorigin="anonymous">
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    <title>{% block title %}Meraki Therapy{% endblock %}</title>
+</head>
+<body>
+
+    <!-- Top Bar Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <a href="{% url 'catalog:index' %}">
+                <img src="{% static 'images/logo.png' %}" alt="Meraki Therapy" class="logo-img">
+            </a>
+        </div>
+        
+        <ul class="navbar-links">
+            <li class="nav-item"><a class="nav-link" href="{% url 'catalog:index' %}">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'catalog:therapist_list' %}">Therapists</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'catalog:patient_list' %}">Patients</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'catalog:appointment_list' %}">Appointments</a></li>
+        </ul>
+    </nav>
+
+    <div class="container mt-5">
+        <!-- Content -->
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+</body>
+</html>

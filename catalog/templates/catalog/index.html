@@ -1,0 +1,41 @@
+{% extends "base_generic.html" %}
+
+{% block title %}Meraki Therapy {% endblock %}
+
+{% block content %}
+    <div class="content-container">
+        <h1>Meraki Therapy</h1>
+        <em>Mental health with Love & Care</em>
+   
+    <h2>Meet Our Team</h2>
+
+    <h2>Therapists</h2>
+    <ul>
+        {% for therapist in therapists %}
+            <li>{{ therapist.name }} - {{ therapist.specialization }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'catalog:therapist_list' %}">View All Therapists</a>
+
+    <h2>Patients</h2>
+    <ul>    
+        {% for patient in patients %}
+            <li>{{ patient.name }} - {{ patient.contact_number }}</li>
+        {% endfor %}    
+    </ul>
+    <a href="{% url 'catalog:patient_list' %}">View All Patients</a>
+
+    <h2>Book an Appointment</h2>
+    <ul>
+        {% for appointment in appointments %}
+            <li>{{ appointment.date }} - Therapist: {{ appointment.therapist.name }}, Patient: {{ appointment.patient.name }}</li>
+        {% endfor %}     
+    </ul>
+    <a href="{% url 'catalog:appointment_list' %}">View All Appointments</a>
+
+    <h2>Upcoming Events</h2>
+    <p>
+        Stay tuned for upcoming events and workshops to enhance your mental health and well-being.
+    </p>
+     </div>
+{% endblock %}

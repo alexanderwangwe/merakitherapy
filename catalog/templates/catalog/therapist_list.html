@@ -1,0 +1,13 @@
+{% extends "base_generic.html" %}
+
+    {% block content %}
+        <h1>Therapist List</h1>
+        <ul>
+            {% for therapist in therapists %}
+                <li>
+                    <a href="{% url 'catalog:therapist_detail' therapist.pk %}">{{ therapist.name }}</a>
+                   
+                </li>
+            {% endfor %}
+        </ul>
+    {% endblock %}
