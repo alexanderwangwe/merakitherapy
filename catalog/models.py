@@ -55,12 +55,8 @@ class Patient(models.Model):
     patient_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=1,
-                              choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     contact = models.CharField(max_length=15)
-    appointment = models.ForeignKey('Appointment',
-                                    on_delete=models.CASCADE,
-                                    related_name='patient_appointment')
 
     class Meta:
         ordering = ['patient_id']
@@ -70,7 +66,6 @@ class Patient(models.Model):
 
     def get_absolute_url(self):
         return reverse('patient-detail', args=[self.patient_id])
-
 
 # Appointment model
 class Appointment(models.Model):
@@ -84,10 +79,13 @@ class Appointment(models.Model):
     date = models.DateField(null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
     therapist = models.ForeignKey('Therapist', on_delete=models.CASCADE,
-                                  related_name='therapist_appointment', null=True)
+                                  related_name='therapist_appointment',
+                                  null=True)
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE,
-                                related_name='patient_appointment', null=True)
+                                related_name='patient_appointment',
+                                null=True,
+                                blank=True)
 
     status = models.CharField(max_length=20,
                               choices=APPOINTMENT_STATUS_CHOICES,
@@ -97,7 +95,8 @@ class Appointment(models.Model):
         ordering = ['appointment_id', 'date', 'time', 'therapist', 'patient', 'status']
 
     def __str__(self):
-        return f"Appointment {self.appointment_id} on {self.date} at {self.time} with {self.patient.name}, Status: {self.status}"
+        patient_name = self.patient.name if self.patient else "Unassigned"
+        return f"Appointment {self.appointment_id} on {self.date} at {self.time} with {patient_name}, Status: {self.status}"
 
     def get_absolute_url(self):
         return reverse('appointment-detail', args=[self.appointment_id])
