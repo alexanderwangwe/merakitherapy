@@ -6,7 +6,6 @@
             {% for therapist in therapists %}
                 <li>
                     <a href="{% url 'catalog:therapist_detail' therapist.pk %}">{{ therapist.name }}</a>
-                   
                 </li>
             {% endfor %}
         </ul>

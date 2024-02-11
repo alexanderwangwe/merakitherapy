@@ -32,3 +32,6 @@ urlpatterns += [
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.STATIC_ROOT)
 
+urlpatterns += [
+    path('accounts/', include('django.contrib.auth.urls')),
+]

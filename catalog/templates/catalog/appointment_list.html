@@ -5,8 +5,14 @@
         <ul>
           {% for appointment in appointments %}
             <li>
-              <a href="{% url 'appointment-detail' appointment.pk %}">{{ appointment.date }} - {{ appointment.time }}</a>
+                {% if appointment.therapist %}
+                    <a href="{% url 'catalog:appointment_detail' appointment.pk %}">
+                        {{ appointment.therapist.name }} - {{ appointment.date }} - {{ appointment.time }}
+                    </a>
+                {% else %}
+                    Unassigned - {{ appointment.date }} - {{ appointment.time }}
+                {% endif %}
             </li>
-          {% endfor %}
+        {% endfor %}
         </ul>
 {% endblock %}

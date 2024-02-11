@@ -1,3 +1,6 @@
+from datetime import date
+
+import self
 from django.db import models
 from django.urls import reverse
 
@@ -46,15 +49,15 @@ class Therapist(models.Model):
 
 # Patient model
 class Patient(models.Model):
+    patient_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    date_of_birth = models.DateField(null=True, blank=True)
+
     GENDER_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),
         ('O', 'Other'),
     ]
-
-    patient_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
-    date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     contact = models.CharField(max_length=15)
 
@@ -64,8 +67,18 @@ class Patient(models.Model):
     def __str__(self):
         return f"Patient {self.patient_id}: {self.name}"
 
+    def calculate_age(self):
+        today = date.today()
+        birth_date = self.date_of_birth
+        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        return age
+
+    @property
+    def age(self):
+        return self.calculate_age()
     def get_absolute_url(self):
         return reverse('patient-detail', args=[self.patient_id])
+
 
 # Appointment model
 class Appointment(models.Model):

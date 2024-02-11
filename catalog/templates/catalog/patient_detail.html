@@ -1,11 +1,13 @@
 {% extends "base_generic.html" %}
 
-
+{% block content %}
 <h1>Patient Detail</h1>
 
 <p>Name: {{ patient.name }}</p>
 <p>Date of Birth: {{ patient.date_of_birth }}</p>
+<p>Age: {{ patient.calculate_age }}</p>
 <p>Gender: {{ patient.get_gender_display }}</p>
 <p>Contact: {{ patient.contact }}</p>
 <p>Appointment: {{ patient.appointment.date }} - {{ patient.appointment.time }}</p>
 
+{% endblock %}
