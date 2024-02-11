@@ -16,16 +16,14 @@ def index(request):
     request.session['num_visits'] = num_visits + 1
 
     # Render the HTML template catalog/index.html with the data in the context variable.
-    return render(
-        request,
-        'catalog/index.html',
-        context={
-            'num_appointments': num_appointments,
-            'num_patients': num_patients,
-            'num_therapists': num_therapists,
-            'num_visits': num_visits,
-        },
-    )
+    return render(request, 'catalog/index.html',
+                  context={
+                      'num_appointments': num_appointments,
+                      'num_patients': num_patients,
+                      'num_therapists': num_therapists,
+                      'num_visits': num_visits,
+                  },
+                  )
 
 
 class AppointmentListView(generic.ListView):

@@ -24,6 +24,8 @@ from django.views.generic import RedirectView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('catalog/', include('catalog.urls')),
+    path('accounts/', include('django.contrib.auth.urls'))
+
 ]
 
 urlpatterns += [
@@ -32,6 +34,4 @@ urlpatterns += [
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.STATIC_ROOT)
 
-urlpatterns += [
-    path('accounts/', include('django.contrib.auth.urls')),
-]
+
