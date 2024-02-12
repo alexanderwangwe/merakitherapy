@@ -1,12 +1,14 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.conf import settings
 from django.contrib.auth.models import User
-from django.shortcuts import render
+from django.core.exceptions import MultipleObjectsReturned
+from django.shortcuts import render, redirect
 from django.views import generic
 from django.views import View
 from .models import Appointment, Patient, Therapist
 from django.db import models
+from django.db.models import Count, Avg
+from .forms import PatientRegistrationForm, TherapistAppointmentForm
 
 
 def index(request):
@@ -108,22 +110,69 @@ class TherapistDetailView(generic.DetailView):
     context_object_name = 'therapist'
 
 
+@login_required
 def therapist_dashboard(request):
-    # Retrieve insights for the therapist
-    therapist = Therapist.objects.get(user=request.user)  # Assuming you have a user field in Therapist model
-    patients = therapist.patient_set.all()  # Assuming there's a reverse relation from Therapist to Patient
+    try:
+        therapist = Therapist.objects.get(user=request.user)
+        patients = therapist.patient_set.all()
 
-    # Calculate insights
-    average_age = patients.aggregate(avg_age=models.Avg('date_of_birth'))
-    gender_distribution = patients.values('gender').annotate(count=models.Count('gender'))
-    services_sought_after = patients.values('service').annotate(count=models.Count('service'))
+        # Calculate insights
+        total_patients = patients.count()
 
-    context = {
-        'therapist': therapist,
-        'average_age': average_age,
-        'gender_distribution': gender_distribution,
-        'services_sought_after': services_sought_after,
-        'total_patients': patients.count(),
-    }
+        if total_patients > 0:
+            average_age = patients.aggregate(avg_age=Avg('calculate_age'))
+            gender_distribution = patients.values('gender').annotate(count=Count('gender'))
 
-    return render(request, 'catalog/therapist_dashboard.html', context)
+            # Assuming a reverse relation from Patient to Appointment
+            booked_appointments = Appointment.objects.filter(therapist=therapist, status='Confirmed')
+
+            services_sought_after = booked_appointments.values('service').annotate(count=Count('service'))
+
+            context = {
+                'therapist': therapist,
+                'total_patients': total_patients,
+                'average_age': average_age['avg_age'],
+                'gender_distribution': gender_distribution,
+                'services_sought_after': services_sought_after,
+                'total_booked_appointments': booked_appointments.count(),
+            }
+
+            return render(request, 'catalog/therapist_dashboard.html', context)
+        else:
+            # Handle the case where the therapist has not seen any patients
+            return render(request, 'catalog/no_patients_found.html')
+
+    except Therapist.DoesNotExist:
+        # Handle the case where no therapist is found for the user
+        return render(request, 'catalog/no_therapist_found.html')
+
+    except MultipleObjectsReturned:
+        # Handle the case where multiple therapists are found
+        # You can log an error, redirect the user, or take appropriate action
+        return render(request, 'catalog/multiple_therapists_found.html')
+
+
+def patient_registration(request):
+    if request.method == 'POST':
+        form = PatientRegistrationForm(request.POST)
+        if form.is_valid():
+            patient = form.save()
+            return redirect('patient-detail', pk=patient.pk)  # Redirect to patient detail page
+    else:
+        form = PatientRegistrationForm()
+
+    return render(request, 'catalog/patient_registration.html', {'form': form})
+
+
+def create_appointment(request, therapist_id):
+    if request.method == 'POST':
+        form = TherapistAppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.therapist_id = therapist_id
+            appointment.save()
+            return redirect('therapist-detail', pk=therapist_id)  # Redirect to therapist detail page
+    else:
+        form = TherapistAppointmentForm()
+
+    return render(request, 'catalog/create_appointment.html', {'form': form})

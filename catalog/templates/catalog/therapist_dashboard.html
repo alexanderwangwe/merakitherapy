@@ -4,21 +4,27 @@
 {% block content %}
   <h1>Therapist Dashboard</h1>
   
-  <p>Total Patients: {{ total_patients }}</p>
+  {% if total_patients > 0 %}
+    <p>Total Patients: {{ total_patients }}</p>
+    
+    {% if average_age %}
+      <h2>Average Age: {{ average_age|default:"N/A" }}</h2>
+    {% endif %}
 
-  <h2>Average Age: {{ average_age.avg_age|default:"N/A" }}</h2>
+    <h2>Gender Distribution:</h2>
+    <ul>
+      {% for gender in gender_distribution %}
+        <li>{{ gender.gender }}: {{ gender.count }}</li>
+      {% endfor %}
+    </ul>
 
-  <h2>Gender Distribution:</h2>
-  <ul>
-    {% for gender in gender_distribution %}
-      <li>{{ gender.gender }}: {{ gender.count }}</li>
-    {% endfor %}
-  </ul>
-
-  <h2>Services Sought After:</h2>
-  <ul>
-    {% for service in services_sought_after %}
-      <li>{{ service.service }}: {{ service.count }}</li>
-    {% endfor %}
-  </ul>
+    <h2>Services Sought After:</h2>
+    <ul>
+      {% for service in services_sought_after %}
+        <li>{{ service.service }}: {{ service.count }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No insights available. The therapist has not seen any patients yet.</p>
+  {% endif %}
 {% endblock %}

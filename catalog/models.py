@@ -1,13 +1,12 @@
-from datetime import date
-
-import self
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+from datetime import date
 
 
-# Therapist model
 class Therapist(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None, null=True, unique=True)
+
     therapist_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     contact = models.CharField(max_length=15)
@@ -20,10 +19,7 @@ class Therapist(models.Model):
         ('BEHAVIORAL', 'BEHAVIORAL'),
         ('ADDICTION', 'ADDICTION'),
     ]
-    specialization = models.CharField(max_length=100,
-                                      choices=SPECIALIZATION_CHOICES,
-                                      blank=True,
-                                      default='COUPLES',
+    specialization = models.CharField(max_length=100, choices=SPECIALIZATION_CHOICES, blank=True, default='COUPLES',
                                       help_text="Select Specialization")
 
     AVAILABILITY_STATUS = (
@@ -31,10 +27,7 @@ class Therapist(models.Model):
         ('B', 'BOOKED')
     )
 
-    availability = models.CharField(max_length=10,
-                                    choices=AVAILABILITY_STATUS,
-                                    blank=True,
-                                    default="Available",
+    availability = models.CharField(max_length=10, choices=AVAILABILITY_STATUS, blank=True, default="Available",
                                     help_text="Confirm Availability")
 
     class Meta:
@@ -52,7 +45,6 @@ class Therapist(models.Model):
         return reverse('therapist-detail', args=[self.therapist_id])
 
 
-# Patient model
 class Patient(models.Model):
     patient_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -65,6 +57,7 @@ class Patient(models.Model):
     ]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     contact = models.CharField(max_length=15)
+    therapist = models.ForeignKey(Therapist, on_delete=models.CASCADE, null=True, blank=True)
 
     class Meta:
         ordering = ['patient_id']
@@ -89,9 +82,9 @@ class Patient(models.Model):
         return reverse('patient-detail', args=[self.patient_id])
 
 
+
 # Appointment model
 class Appointment(models.Model):
-
     APPOINTMENT_STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Confirmed', 'Confirmed'),
@@ -101,6 +94,7 @@ class Appointment(models.Model):
     appointment_id = models.AutoField(primary_key=True)
     date = models.DateField(null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
+    service = models.CharField(max_length=255, blank=True)
     therapist = models.ForeignKey('Therapist', on_delete=models.CASCADE,
                                   related_name='therapist_appointment',
                                   null=True)
