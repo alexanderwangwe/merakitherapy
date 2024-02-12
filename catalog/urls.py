@@ -16,5 +16,6 @@ urlpatterns = [
     path('appointment/', views.AppointmentListView.as_view(), name='appointment_list'),
     path('appointment/<int:pk>/', views.AppointmentDetailView.as_view(), name='appointment_detail'),
 
+    path('user_appointments/', views.user_appointments, name='user_appointments'),
 
 ]

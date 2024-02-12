@@ -40,6 +40,11 @@ class Therapist(models.Model):
     class Meta:
         ordering = ['therapist_id']
 
+        permissions = [
+            ("can_mark_available", "Set therapist as available"),
+            ("can_mark_booked", "Set therapist as booked"),
+        ]
+
     def __str__(self):
         return f"Therapist {self.therapist_id}: {self.name}, Contact: {self.contact}, Specialization: {self.specialization}, Availability: {self.availability}"
 
@@ -63,6 +68,9 @@ class Patient(models.Model):
 
     class Meta:
         ordering = ['patient_id']
+        permissions = [
+            ("can_add_appointment", "Can add appointment"),
+        ]
 
     def __str__(self):
         return f"Patient {self.patient_id}: {self.name}"
@@ -76,6 +84,7 @@ class Patient(models.Model):
     @property
     def age(self):
         return self.calculate_age()
+
     def get_absolute_url(self):
         return reverse('patient-detail', args=[self.patient_id])
 
