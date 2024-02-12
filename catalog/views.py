@@ -106,3 +106,24 @@ class TherapistDetailView(generic.DetailView):
     model = Therapist
     template_name = 'catalog/therapist_detail.html'
     context_object_name = 'therapist'
+
+
+def therapist_dashboard(request):
+    # Retrieve insights for the therapist
+    therapist = Therapist.objects.get(user=request.user)  # Assuming you have a user field in Therapist model
+    patients = therapist.patient_set.all()  # Assuming there's a reverse relation from Therapist to Patient
+
+    # Calculate insights
+    average_age = patients.aggregate(avg_age=models.Avg('date_of_birth'))
+    gender_distribution = patients.values('gender').annotate(count=models.Count('gender'))
+    services_sought_after = patients.values('service').annotate(count=models.Count('service'))
+
+    context = {
+        'therapist': therapist,
+        'average_age': average_age,
+        'gender_distribution': gender_distribution,
+        'services_sought_after': services_sought_after,
+        'total_patients': patients.count(),
+    }
+
+    return render(request, 'catalog/therapist_dashboard.html', context)

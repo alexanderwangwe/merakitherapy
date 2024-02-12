@@ -1,6 +1,7 @@
 from datetime import date
 
 import self
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 
@@ -10,7 +11,6 @@ class Therapist(models.Model):
     therapist_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     contact = models.CharField(max_length=15)
-
     SPECIALIZATION_CHOICES = [
         ('COUPLES', 'COUPLES'),
         ('TRAUMA', 'TRAUMA'),
@@ -91,6 +91,7 @@ class Patient(models.Model):
 
 # Appointment model
 class Appointment(models.Model):
+
     APPOINTMENT_STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Confirmed', 'Confirmed'),
