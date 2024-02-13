@@ -1,11 +1,15 @@
-<!-- catalog/templates/catalog/create_appointment.html -->
 {% extends "base_generic.html" %}
 
+{% block title %}Create Appointment{% endblock %}
+
 {% block content %}
-  <h1>Create Appointment</h1>
-  <form method="post">
+  <h1>Create an Appointment</h1>
+  <form method="post" action="{% url 'catalog:create_appointment' therapist_id=therapist.id %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <button type="submit">Create Appointment</button>
   </form>
+  <br>
+    <a href="{% url 'catalog:create_appointment' therapist_id=therapist.id %}">Back to Create Appointment</a>
+    
 {% endblock %}

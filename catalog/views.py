@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned
@@ -8,7 +9,7 @@ from django.views import View
 from .models import Appointment, Patient, Therapist
 from django.db import models
 from django.db.models import Count, Avg
-from .forms import PatientRegistrationForm, TherapistAppointmentForm
+from .forms import PatientRegistrationForm, TherapistAppointmentForm, TherapistRegistrationForm
 
 
 def index(request):
@@ -37,8 +38,7 @@ def user_appointments(request):
     # Retrieve current user's appointments
     appointments = Appointment.objects.filter(user=request.user)
 
-    return render(request, 'catalog/user_appointments.html',
-                  context={'appointments': appointments})
+    return render(request, 'catalog/user_appointments.html', context={'appointments': appointments})
 
 
 class MyView(LoginRequiredMixin, View):
@@ -118,14 +118,12 @@ def therapist_dashboard(request):
 
         # Calculate insights
         total_patients = patients.count()
-
         if total_patients > 0:
             average_age = patients.aggregate(avg_age=Avg('calculate_age'))
             gender_distribution = patients.values('gender').annotate(count=Count('gender'))
 
             # Assuming a reverse relation from Patient to Appointment
             booked_appointments = Appointment.objects.filter(therapist=therapist, status='Confirmed')
-
             services_sought_after = booked_appointments.values('service').annotate(count=Count('service'))
 
             context = {
@@ -152,11 +150,14 @@ def therapist_dashboard(request):
         return render(request, 'catalog/multiple_therapists_found.html')
 
 
+@login_required
 def patient_registration(request):
     if request.method == 'POST':
         form = PatientRegistrationForm(request.POST)
         if form.is_valid():
-            patient = form.save()
+            patient = form.save(commit=False)
+            patient.user = request.user  # Assign the current user to the patient
+            patient.save()
             return redirect('patient-detail', pk=patient.pk)  # Redirect to patient detail page
     else:
         form = PatientRegistrationForm()
@@ -164,15 +165,38 @@ def patient_registration(request):
     return render(request, 'catalog/patient_registration.html', {'form': form})
 
 
+@login_required
+def therapist_registration(request):
+    if request.method == 'POST':
+        form = TherapistRegistrationForm(request.POST)
+        if form.is_valid():
+            therapist = form.save(commit=False)
+            therapist.user = request.user
+            therapist.save()
+            return redirect('therapist-detail', pk=therapist.pk) # Redirect to therapist detail page
+    else:
+        form = TherapistRegistrationForm()
+        return render(request, 'catalog/therapist_registration.html', {'form': form})
+
+
+@login_required
 def create_appointment(request, therapist_id):
     if request.method == 'POST':
         form = TherapistAppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.therapist_id = therapist_id
+            appointment.patient = request.user.patient  # Assign the current user as the patient
             appointment.save()
             return redirect('therapist-detail', pk=therapist_id)  # Redirect to therapist detail page
     else:
         form = TherapistAppointmentForm()
 
     return render(request, 'catalog/create_appointment.html', {'form': form})
+
+
+# TODO: fix the logout view
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('index')

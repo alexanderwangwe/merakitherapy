@@ -1,11 +1,13 @@
-<!-- catalog/templates/catalog/patient_registration.html -->
+<!-- patient_registration.html -->
 {% extends "base_generic.html" %}
 
+{% block title %}Patient Registration{% endblock %}
+
 {% block content %}
-  <h1>Patient Registration</h1>
-  <form method="post">
+  <h2>Patient Registration</h2>
+  <form method="post" action="{% url 'catalog:patient_registration' %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <button type="submit">Register</button>
   </form>
 {% endblock %}

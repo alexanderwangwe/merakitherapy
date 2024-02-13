@@ -2,11 +2,10 @@
 
 {% block content %}
     
-<h1>Therapist Detail</h1>
+<h1>Therapist Detail</h1>      
 
 <p>Name: {{ therapist.name }}</p>
 <p>Contact: {{ therapist.contact }}</p>
 <p>Specialization: {{ therapist.specialization }}</p>
 <p>Availability: {{ therapist.get_availability_display }}</p>
-    
 {% endblock %}

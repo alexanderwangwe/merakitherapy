@@ -5,7 +5,7 @@ from datetime import date
 
 
 class Therapist(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None, null=True, unique=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None, null=True)
 
     therapist_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
@@ -46,6 +46,10 @@ class Therapist(models.Model):
 
 
 class Patient(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=None, null=True)
+    therapist = models.ForeignKey(Therapist, on_delete=models.CASCADE, null=True, blank=True)
+
+    #fields
     patient_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -57,8 +61,6 @@ class Patient(models.Model):
     ]
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     contact = models.CharField(max_length=15)
-    therapist = models.ForeignKey(Therapist, on_delete=models.CASCADE, null=True, blank=True)
-
     class Meta:
         ordering = ['patient_id']
         permissions = [
@@ -85,6 +87,9 @@ class Patient(models.Model):
 
 # Appointment model
 class Appointment(models.Model):
+    therapist = models.ForeignKey(Therapist, on_delete=models.CASCADE, null=True, blank=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True, blank=True)
+
     APPOINTMENT_STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('Confirmed', 'Confirmed'),
@@ -95,15 +100,6 @@ class Appointment(models.Model):
     date = models.DateField(null=True, blank=True)
     time = models.TimeField(null=True, blank=True)
     service = models.CharField(max_length=255, blank=True)
-    therapist = models.ForeignKey('Therapist', on_delete=models.CASCADE,
-                                  related_name='therapist_appointment',
-                                  null=True)
-
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE,
-                                related_name='patient_appointment',
-                                null=True,
-                                blank=True)
-
     status = models.CharField(max_length=20,
                               choices=APPOINTMENT_STATUS_CHOICES,
                               default='Pending')
