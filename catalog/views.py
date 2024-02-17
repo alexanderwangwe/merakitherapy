@@ -1,15 +1,19 @@
-from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
+from django.contrib.auth.views import LogoutView
 from django.core.exceptions import MultipleObjectsReturned
-from django.shortcuts import render, redirect
-from django.views import generic
-from django.views import View
-from .models import Appointment, Patient, Therapist
 from django.db import models
 from django.db.models import Count, Avg
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
+from django.views import generic
+
 from .forms import PatientRegistrationForm, TherapistAppointmentForm, TherapistRegistrationForm
+from .models import Appointment, Patient, Therapist
 
 
 def index(request):
@@ -33,7 +37,7 @@ def index(request):
                   )
 
 
-@login_required
+
 def user_appointments(request):
     # Retrieve current user's appointments
     appointments = Appointment.objects.filter(user=request.user)
@@ -44,6 +48,14 @@ def user_appointments(request):
 class MyView(LoginRequiredMixin, View):
     login_url = '/login/'
     redirect_field_name = 'redirect_to'
+
+    # TODO: fix the logout view
+
+
+class MyLogoutView(LoginRequiredMixin, LogoutView):
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return HttpResponseRedirect('/')
 
 
 class MyView(PermissionRequiredMixin, View):
@@ -110,7 +122,7 @@ class TherapistDetailView(generic.DetailView):
     context_object_name = 'therapist'
 
 
-@login_required
+
 def therapist_dashboard(request):
     try:
         therapist = Therapist.objects.get(user=request.user)
@@ -150,7 +162,6 @@ def therapist_dashboard(request):
         return render(request, 'catalog/multiple_therapists_found.html')
 
 
-@login_required
 def patient_registration(request):
     if request.method == 'POST':
         form = PatientRegistrationForm(request.POST)
@@ -165,7 +176,6 @@ def patient_registration(request):
     return render(request, 'catalog/patient_registration.html', {'form': form})
 
 
-@login_required
 def therapist_registration(request):
     if request.method == 'POST':
         form = TherapistRegistrationForm(request.POST)
@@ -173,30 +183,25 @@ def therapist_registration(request):
             therapist = form.save(commit=False)
             therapist.user = request.user
             therapist.save()
-            return redirect('therapist-detail', pk=therapist.pk) # Redirect to therapist detail page
+            return redirect('therapist-detail', pk=therapist.pk)  # Redirect to therapist detail page
     else:
         form = TherapistRegistrationForm()
         return render(request, 'catalog/therapist_registration.html', {'form': form})
 
 
-@login_required
+
 def create_appointment(request, therapist_id):
+    therapist = get_object_or_404(Therapist, pk=therapist_id)
+
     if request.method == 'POST':
         form = TherapistAppointmentForm(request.POST)
         if form.is_valid():
             appointment = form.save(commit=False)
-            appointment.therapist_id = therapist_id
-            appointment.patient = request.user.patient  # Assign the current user as the patient
+            appointment.therapist = therapist
+            appointment.patient = request.user.patient
             appointment.save()
-            return redirect('therapist-detail', pk=therapist_id)  # Redirect to therapist detail page
+            return redirect('therapist-detail', pk=therapist_id)
     else:
         form = TherapistAppointmentForm()
 
-    return render(request, 'catalog/create_appointment.html', {'form': form})
-
-
-# TODO: fix the logout view
-@login_required
-def logout_view(request):
-    logout(request)
-    return redirect('index')
+    return render(request, 'catalog/create_appointment.html', {'form': form, 'therapist': therapist})

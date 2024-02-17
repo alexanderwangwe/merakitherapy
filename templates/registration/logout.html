@@ -1,7 +1,7 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
- <form method="post" action="{% url 'log_out' %}">
+ <form method="post" action="{% url 'logout' %}">
   {% csrf_token %}
   <button type="submit">Logout</button>
 </form>

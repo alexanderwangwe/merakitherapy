@@ -1,7 +1,8 @@
-from django.urls import path
-
+from django.urls import path, include
 from . import views
 from django.contrib.auth.views import LogoutView
+
+from .views import MyLogoutView
 
 app_name = 'catalog'
 
@@ -16,16 +17,16 @@ urlpatterns = [
 
     path('appointment/', views.AppointmentListView.as_view(), name='appointment_list'),
     path('appointment/<int:pk>/', views.AppointmentDetailView.as_view(), name='appointment_detail'),
-# TODO: fix the path for the user_appointments view
+    # TODO: fix the path for the user_appointments view
     path('user_appointments/', views.user_appointments, name='user_appointments'),
     path('therapist_dashboard/', views.therapist_dashboard, name='therapist_dashboard'),
-
-    path('log_out/', LogoutView.as_view(), name='log_out'),
 
     # registrations
     path('patient_registration/', views.patient_registration, name='patient_registration'),
     path('therapist_registration/', views.therapist_registration, name='therapist_registration'),
- # TODO: fix the path for the create_appointment view
-    path('create_appointment/<int:therapist_id>/', views.create_appointment, name='create_appointment'),
+    # TODO: fix the path for the create_appointment view
+    path('therapist/<int:therapist_id>/create_appointment/', views.create_appointment, name='create_appointment'),
+
+    path('accounts/logout/', MyLogoutView.as_view(), name='logout'),
 
 ]
