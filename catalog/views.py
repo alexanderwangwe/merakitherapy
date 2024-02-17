@@ -1,17 +1,13 @@
-from django.contrib import messages
-from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User
-from django.contrib.auth.views import LogoutView
 from django.core.exceptions import MultipleObjectsReturned
 from django.db import models
 from django.db.models import Count, Avg
-from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views import generic
-
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 from .forms import PatientRegistrationForm, TherapistAppointmentForm, TherapistRegistrationForm
 from .models import Appointment, Patient, Therapist
 
@@ -37,25 +33,30 @@ def index(request):
                   )
 
 
+def login_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
 
-def user_appointments(request):
-    # Retrieve current user's appointments
-    appointments = Appointment.objects.filter(user=request.user)
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            messages.success(request, 'You have been logged in.')
+            return redirect('index')
+        else:
+            messages.success(request, 'Invalid username or password. Please try again.')
+            return render(request, 'registration/login.html', {})
+    else:
+        return render(request, 'registration/login.html', {})
 
-    return render(request, 'catalog/user_appointments.html', context={'appointments': appointments})
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, 'You have been logged out.')
+    return redirect('index')
 
 
-class MyView(LoginRequiredMixin, View):
-    login_url = '/login/'
-    redirect_field_name = 'redirect_to'
-
-    # TODO: fix the logout view
-
-
-class MyLogoutView(LoginRequiredMixin, LogoutView):
-    def post(self, request, *args, **kwargs):
-        logout(request)
-        return HttpResponseRedirect('/')
 
 
 class MyView(PermissionRequiredMixin, View):
@@ -122,44 +123,32 @@ class TherapistDetailView(generic.DetailView):
     context_object_name = 'therapist'
 
 
-
 def therapist_dashboard(request):
-    try:
-        therapist = Therapist.objects.get(user=request.user)
-        patients = therapist.patient_set.all()
+    # Number of patients
+    num_patients = Patient.objects.count()
 
-        # Calculate insights
-        total_patients = patients.count()
-        if total_patients > 0:
-            average_age = patients.aggregate(avg_age=Avg('calculate_age'))
-            gender_distribution = patients.values('gender').annotate(count=Count('gender'))
+    # Number of appointments
+    num_appointments = Appointment.objects.count()
 
-            # Assuming a reverse relation from Patient to Appointment
-            booked_appointments = Appointment.objects.filter(therapist=therapist, status='Confirmed')
-            services_sought_after = booked_appointments.values('service').annotate(count=Count('service'))
+    # Gender distribution
+    gender_distribution = Patient.objects.values('gender').annotate(count=Count('gender'))
+    total_gender_count = sum(entry['count'] for entry in gender_distribution)
 
-            context = {
-                'therapist': therapist,
-                'total_patients': total_patients,
-                'average_age': average_age['avg_age'],
-                'gender_distribution': gender_distribution,
-                'services_sought_after': services_sought_after,
-                'total_booked_appointments': booked_appointments.count(),
-            }
+    # Calculate percentage for each gender
+    for entry in gender_distribution:
+        entry['percent'] = (entry['count'] / total_gender_count) * 100
 
-            return render(request, 'catalog/therapist_dashboard.html', context)
-        else:
-            # Handle the case where the therapist has not seen any patients
-            return render(request, 'catalog/no_patients_found.html')
+    # Most chosen specialization
+    most_chosen_specialization = Therapist.objects.values('specialization').annotate(count=Count('specialization')).order_by('-count').first()
 
-    except Therapist.DoesNotExist:
-        # Handle the case where no therapist is found for the user
-        return render(request, 'catalog/no_therapist_found.html')
+    context = {
+        'num_patients': num_patients,
+        'num_appointments': num_appointments,
+        'gender_distribution': gender_distribution,
+        'most_chosen_specialization': most_chosen_specialization,
+    }
 
-    except MultipleObjectsReturned:
-        # Handle the case where multiple therapists are found
-        # You can log an error, redirect the user, or take appropriate action
-        return render(request, 'catalog/multiple_therapists_found.html')
+    return render(request, 'catalog/therapist_dashboard.html', context)
 
 
 def patient_registration(request):
@@ -187,7 +176,6 @@ def therapist_registration(request):
     else:
         form = TherapistRegistrationForm()
         return render(request, 'catalog/therapist_registration.html', {'form': form})
-
 
 
 def create_appointment(request, therapist_id):

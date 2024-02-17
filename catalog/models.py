@@ -39,7 +39,8 @@ class Therapist(models.Model):
         ]
 
     def __str__(self):
-        return f"Therapist {self.name}, Contact: {self.contact}, Specialization: {self.specialization}, Availability: {self.availability}"
+        return (f"Therapist {self.name}, Contact: {self.contact}, Specialization: {self.specialization}, Availability: "
+                f"{self.availability}")
 
     def get_absolute_url(self):
         return reverse('therapist-detail', args=[self.therapist_id])
@@ -114,7 +115,8 @@ class Appointment(models.Model):
 
     def __str__(self):
         patient_name = self.patient.name if self.patient else "Unassigned"
-        return f"Appointment {self.appointment_id} on {self.date} at {self.time} with {patient_name}, Status: {self.status}"
+        return (f"Appointment {self.appointment_id} on {self.date} at {self.time} with {patient_name}, "
+                f"Status: {self.status}")
 
     def get_absolute_url(self):
         return reverse('appointment-detail', args=[str(self.appointment_id)])

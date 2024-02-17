@@ -49,3 +49,128 @@ body {
 h1, em {
     margin-bottom: 20px; /* Optional: Add bottom margin for better spacing between elements */
 }
+
+
+/* css for gender distribution bar chart */
+.chart-container {
+    width: 300px;
+    margin: 20px 0;
+    border: 1px solid black;
+    border-radius: 5px;
+    overflow: hidden; /* Ensure that the borders are applied correctly */
+
+}
+
+.bar-chart {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+.bar {
+    flex: 1;
+    text-align: center;
+    color: mediumpurple;
+    background-color: #2ecc71;
+    padding: 10px;
+    margin: 2px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+/* Assign specific colors based on gender */
+.bar[data-gender="M"] {
+    background-color: #3498db; /* Blue for Male */
+}
+
+.bar[data-gender="F"] {
+    background-color: #e74c3c; /* Red for Female */
+}
+
+.bar[data-gender="O"] {
+    background-color: #2ecc71; /* Green for Other */
+}
+
+
+
+/* css for specialization sought after the most pie chart */
+.pie-box {
+    width: 400px;
+    height: 300px;
+    margin: 20px 0;
+    border: 1px solid gainsboro;
+    border-radius: 5px;
+    overflow: hidden; /* Ensure that the borders are applied correctly */
+    background-color: #dcdcdc;
+}
+
+.pie-chart {
+    width: 100%;
+    height: 200px;
+    border-radius: 50%;
+    position: relative;
+    background-color: olivedrab;
+}
+
+.slice {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 50%, 100% 0, 100% 100%);
+    background-color: indianred;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.legend {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.legend-item {
+    width : 180px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    border-radius: 50%;
+}
+
+/* Assigning specific colors based on specialization */
+
+.legend-item[data-specialization="COUPLES"] .legend-color {
+    background-color: #3498db; /* Blue for Couples */
+}
+.legend-item[data-specialization="TRAUMA"] .legend-color {
+    background-color: #e74c3c; /* Red for Trauma */
+}
+
+.legend-item[data-specialization="DEPRESSION"] .legend-color {
+    background-color: #9b59b6; /* Purple for Depression */
+}
+
+.legend-item[data-specialization="NUTRITIONAL"] .legend-color {
+    background-color: #2ecc71; /* Green for Nutritional */
+}
+
+.legend-item[data-specialization="FAMILY"] .legend-color {
+    background-color: #f39c12; /* Orange for Family */
+}
+
+.legend-item[data-specialization="BEHAVIORAL"] .legend-color {
+    background-color: #e67e22; /* Brown for Behavioral */
+}
+
+.legend-item[data-specialization="ADDICTION"] .legend-color {
+    background-color: #34495e; /* Dark Blue for Addiction */
+}
+
+
+

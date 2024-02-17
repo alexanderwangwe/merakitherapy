@@ -23,25 +23,38 @@
     <ul class="navbar-links">
         <li class="nav-item"><a class="nav-link" href="{% url 'catalog:index' %}">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="{% url 'catalog:therapist_list' %}">Therapists</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'catalog:patient_list' %}">Patients</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'catalog:appointment_list' %}">Appointments</a></li>
         
+        
+        
+            {
+                <!-- Display additional links for therapists -->
+                <li class="nav-item"><a class="nav-link" href="{% url 'catalog:therapist_dashboard' %}">Dashboard</a></li>
+            
+            
+            
+            
+       
+            <!-- Display login/signup links for non-authenticated users -->
         
         {% if user.is_authenticated %}
-            {% if user.is_therapist %}
-                <!-- Display additional links for therapists -->
-                <li class="nav-item"><a class="nav-link" href="{% url 'catalog:therapist_dashboard' %}">Dashboard/Analysis</a></li>
-            {% endif %}
-            
-            <!-- Common links for all authenticated users -->
-            <li> User: {{ user.get_username }}</li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">My Appointments</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-            
-        {% else %}
-            <!-- Display login/signup links for non-authenticated users -->
+                <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
+        
+        {% else %}    
+           
             <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+            
+        {% endif %}
+        
+        <!-- Common links for all un-authenticated users -->
+            
             <li class="nav-item"><a class="nav-link" href="{% url 'catalog:patient_registration' %}">Sign Up  As Patient</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'catalog:therapist_registration' %}">Sign Up  As Therapist</a></li>
-        {% endif %}
+        
+       
+            
+        
     </ul>
 </nav>
 

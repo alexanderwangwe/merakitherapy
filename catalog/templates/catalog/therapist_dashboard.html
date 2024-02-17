@@ -1,30 +1,68 @@
-<!-- therapist_dashboard.html -->
 {% extends "base_generic.html" %}
 
 {% block content %}
-  <h1>Therapist Dashboard</h1>
-  
-  {% if total_patients > 0 %}
-    <p>Total Patients: {{ total_patients }}</p>
+                    <h1>Welcome to your Dashboard</h1>
+     
+        <p>Number of Appointments: {{ num_appointments }}</p>
+        <p>Number of Patients: {{ num_patients }}</p>
+    <br></br>   
     
-    {% if average_age %}
-      <h2>Average Age: {{ average_age|default:"N/A" }}</h2>
-    {% endif %}
+    <!---Gender distribution graphical presentation-->
+    
+    <h2>Gender Distribution</h2>
+    <div class="chart-box ">
+        <div class="bar-chart">
+            {% for entry in gender_distribution %}
+                <div class="bar" style="height: {{ entry.percent }}%; background-color: {{ entry.color }};">
+                     {{ entry.gender }} ({{ entry.count }})
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 
-    <h2>Gender Distribution:</h2>
-    <ul>
-      {% for gender in gender_distribution %}
-        <li>{{ gender.gender }}: {{ gender.count }}</li>
-      {% endfor %}
-    </ul>
+    
+    <!---Most Chosen specialization numerical presentation-->
+    <h2>Most Chosen Specialization</h2>
+<div class="pie-box">
+    <div class="pie-chart">
+        <div class="slice" style="transform: rotate(0deg);">
+             {{ most_chosen_specialization.specialization }} ({{ most_chosen_specialization.count }})
+        </div>
+    </div>
+  
+<div class="legend">
+    <!-- Legend items for each specialization -->
+    <div class="legend-item" data-specialization="COUPLES">
+        <div class="legend-color" style="background-color: #3498db;"></div>
+        Couples
+    </div>
+    <div class="legend-item" data-specialization="TRAUMA">
+        <div class="legend-color" style="background-color: #e74c3c;"></div>
+        Trauma
+    </div>
+    <div class="legend-item" data-specialization="DEPRESSION">
+        <div class="legend-color" style="background-color: #9b59b6;"></div>
+        Depression
+    </div>
+    <div class="legend-item" data-specialization="NUTRITIONAL">
+        <div class="legend-color" style="background-color: #2ecc71;"></div>
+        Nutritional
+    </div>
+    <div class="legend-item" data-specialization="FAMILY">
+        <div class="legend-color" style="background-color: #f39c12;"></div>
+        Family
+    </div>
+    <div class="legend-item" data-specialization="BEHAVIORAL">
+        <div class="legend-color" style="background-color: #e67e22;"></div>
+        Behavioral
+    </div>
+    <div class="legend-item" data-specialization="ADDICTION">
+        <div class="legend-color" style="background-color: #34495e;"></div>
+        Addiction
+    </div>
+</div>
 
-    <h2>Services Sought After:</h2>
-    <ul>
-      {% for service in services_sought_after %}
-        <li>{{ service.service }}: {{ service.count }}</li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No insights available. The therapist has not seen any patients yet.</p>
-  {% endif %}
+</div>
+
+    
 {% endblock %}

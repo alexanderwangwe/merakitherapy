@@ -6,14 +6,7 @@
           <p>Your Username and Password didn't match. Please try again</p>
     {% endif %}
 
-        {% if next %}
-          {% if user.is_authenticated %}
-            <p>Your account doesn't have access to this page. To proceed,
-            please log in with an account that has access.</p>
-          {% else %}
-            <p>Please log in to see this page.</p>
-          {% endif %}
-        {% endif %}
+    <h2>Login</h2>
 
         <form method="post" action="{% url 'login' %}">
           {% csrf_token %}

@@ -13,14 +13,8 @@ class TherapistRegistrationForm(forms.ModelForm):
         model = Therapist
         fields = ['name', 'contact', 'specialization', 'availability']
 
-        # Override the specialization field to use a ChoiceField with predefined choices
-    specialization = forms.ChoiceField(choices=Therapist.SPECIALIZATION_CHOICES)
-    availability = forms.ChoiceField(choices=Therapist.AVAILABILITY_STATUS)
-
 
 class TherapistAppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
         fields = ['therapist', 'date', 'time', 'status']
-
-
