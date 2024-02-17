@@ -1,13 +1,14 @@
-<!-- patient_registration.html -->
 {% extends "base_generic.html" %}
 
 {% block title %}Patient Registration{% endblock %}
 
 {% block content %}
-  <h2>Patient Registration</h2>
+  <h1>Register as Patient</h1>
   <form method="post" action="{% url 'catalog:patient_registration' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Register</button>
   </form>
+    <br>
+    <a href="{% url 'catalog:patient_list' %}">View List of Patients</a>
 {% endblock %}

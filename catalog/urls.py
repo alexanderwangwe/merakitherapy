@@ -9,6 +9,10 @@ urlpatterns = [
 
     path('therapist/', views.TherapistListView.as_view(), name='therapist_list'),
     path('therapist/<int:pk>/', views.TherapistDetailView.as_view(), name='therapist_detail'),
+    path('therapist/<int:pk>/', views.TherapistDetailView.as_view(), name='therapist_detail'),
+    path('appointment/<int:pk>/update/', views.appointment_update_view, name='appointment_update'),
+    path('appointment/<int:pk>/delete/', views.appointment_delete_view, name='appointment_delete'),
+
 
     path('patient/', views.PatientListView.as_view(), name='patient_list'),
     path('patient/<int:pk>/', views.PatientDetailView.as_view(), name='patient_detail'),

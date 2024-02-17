@@ -157,7 +157,7 @@ def patient_registration(request):
             patient = form.save(commit=False)
             patient.user = request.user  # Assign the current user to the patient
             patient.save()
-            return redirect('patient-detail', pk=patient.pk)  # Redirect to patient detail page
+            return redirect('catalog:patient_detail', pk=patient.pk)  # Redirect to patient detail page
     else:
         form = PatientRegistrationForm()
 
@@ -171,10 +171,11 @@ def therapist_registration(request):
             therapist = form.save(commit=False)
             therapist.user = request.user
             therapist.save()
-            return redirect('therapist-detail', pk=therapist.pk)  # Redirect to therapist detail page
+            return redirect('catalog:therapist_detail', pk=therapist.pk)  # Redirect to therapist detail page
     else:
         form = TherapistRegistrationForm()
-        return render(request, 'catalog/therapist_registration.html', {'form': form})
+
+    return render(request, 'catalog/therapist_registration.html', {'form': form})
 
 
 def create_appointment(request):
@@ -185,8 +186,34 @@ def create_appointment(request):
         if form.is_valid():
             appointment = form.save()
 
-            return redirect(appointment.get_absolute_url())
+            return redirect('catalog:appointment_detail', pk=appointment.pk)
     else:
         form = AppointmentForm()
 
     return render(request, 'catalog/create_appointment.html', {'form': form})
+
+
+# update and delete appointments
+def appointment_update_view(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST, instance=appointment)
+        if form.is_valid():
+            form.save()
+            return redirect('catalog:appointment_detail', pk=appointment.pk)
+    else:
+        form = AppointmentForm(instance=appointment)
+
+    return render(request, 'catalog/appointment_list.html', {'form': form})
+
+
+def appointment_delete_view(request, pk):
+    appointment = get_object_or_404(Appointment, pk=pk)
+
+    if request.method == 'POST':
+        appointment.delete()
+        return redirect('catalog:appointment_list')  # Redirect to the appropriate page after deletion
+
+    return render(request, 'catalog/appointment_detail.html', {'appointment': appointment})
+
