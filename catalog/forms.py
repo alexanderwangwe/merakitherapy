@@ -14,7 +14,7 @@ class TherapistRegistrationForm(forms.ModelForm):
         fields = ['name', 'contact', 'specialization', 'availability']
 
 
-class TherapistAppointmentForm(forms.ModelForm):
+class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ['therapist', 'date', 'time', 'status']
+        fields = ['therapist', 'patient', 'date', 'time', 'service']

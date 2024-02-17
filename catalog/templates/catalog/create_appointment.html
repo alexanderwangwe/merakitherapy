@@ -1,14 +1,14 @@
-{% extends "base_generic.html" %}
+{% extends 'base_generic.html' %}
 
-{% block title %}Create Appointment{% endblock %}
+{% block title %}Create an Appointment{% endblock %}
 
 {% block content %}
-  <h1>Create an Appointment</h1>
-  <form method="post" action="{% url 'create_appointment' therapist_id=therapist.id %}">
+  <h2>Create Appointment</h2>
+  <form method="post" action="{% url 'catalog:create_appointment' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Create Appointment</button>
   </form>
-  <br>
-  <a href="{% url 'therapist-detail' pk=therapist.id %}">Back to Therapist Detail</a>
+    <br>
+    <a href="{% url 'catalog:appointment_list' %}">View List of Appointments</a>
 {% endblock %}

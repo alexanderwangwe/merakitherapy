@@ -8,7 +8,7 @@ from django.views import View
 from django.views import generic
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import PatientRegistrationForm, TherapistAppointmentForm, TherapistRegistrationForm
+from .forms import PatientRegistrationForm, TherapistRegistrationForm, AppointmentForm
 from .models import Appointment, Patient, Therapist
 
 
@@ -55,8 +55,6 @@ def logout_user(request):
     logout(request)
     messages.success(request, 'You have been logged out.')
     return redirect('index')
-
-
 
 
 class MyView(PermissionRequiredMixin, View):
@@ -139,7 +137,8 @@ def therapist_dashboard(request):
         entry['percent'] = (entry['count'] / total_gender_count) * 100
 
     # Most chosen specialization
-    most_chosen_specialization = Therapist.objects.values('specialization').annotate(count=Count('specialization')).order_by('-count').first()
+    most_chosen_specialization = Therapist.objects.values('specialization').annotate(
+        count=Count('specialization')).order_by('-count').first()
 
     context = {
         'num_patients': num_patients,
@@ -178,18 +177,16 @@ def therapist_registration(request):
         return render(request, 'catalog/therapist_registration.html', {'form': form})
 
 
-def create_appointment(request, therapist_id):
-    therapist = get_object_or_404(Therapist, pk=therapist_id)
+def create_appointment(request):
+    template_name = 'create_appointment.html'
 
     if request.method == 'POST':
-        form = TherapistAppointmentForm(request.POST)
+        form = AppointmentForm(request.POST)
         if form.is_valid():
-            appointment = form.save(commit=False)
-            appointment.therapist = therapist
-            appointment.patient = request.user.patient
-            appointment.save()
-            return redirect('therapist-detail', pk=therapist_id)
-    else:
-        form = TherapistAppointmentForm()
+            appointment = form.save()
 
-    return render(request, 'catalog/create_appointment.html', {'form': form, 'therapist': therapist})
+            return redirect(appointment.get_absolute_url())
+    else:
+        form = AppointmentForm()
+
+    return render(request, 'catalog/create_appointment.html', {'form': form})
