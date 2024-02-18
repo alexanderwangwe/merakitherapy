@@ -34,8 +34,36 @@ class Therapist(models.Model):
         ordering = ['name', 'specialization']
 
         permissions = [
+            # Availability permissions
             ("can_mark_available", "Set therapist as available"),
             ("can_mark_booked", "Set therapist as booked"),
+
+            # View permissions
+            ("can_view_all_appointments", "View all appointments"),
+            ("can_view_appointment", "View appointment details"),
+            ("can_view_therapist", "View therapist details"),
+            ("can_view_patient", "View patient details"),
+            ("can_view_all_patients", "View all patients"),
+            ("can_view_all_therapists", "View all therapists"),
+            ("can_view_therapist_dashboard", "View therapist dashboard"),
+            ("can_view_appointment_list", "View appointment list"),
+            ("can_view_patient_list", "View patient list"),
+            ("can_view_therapist_list", "View therapist list"),
+            ("can_view_appointment_detail", "View appointment details"),
+            ("can_view_patient_detail", "View patient details"),
+            ("can_view_therapist_detail", "View therapist details"),
+
+            # CRUD permissions
+            ("can_view_appointment_create", "Create appointment"),
+            ("can_view_patient_create", "Create patient"),
+            ("can_view_therapist_create", "Create therapist"),
+            ("can_view_appointment_update", "Update appointment"),
+            ("can_view_patient_update", "Update patient"),
+            ("can_view_therapist_update", "Update therapist"),
+            ("can_view_appointment_delete", "Delete appointment"),
+            ("can_view_patient_delete", "Delete patient"),
+            ("can_view_therapist_delete", "Delete therapist"),
+
         ]
 
     def __str__(self):
@@ -62,7 +90,12 @@ class Patient(models.Model):
     class Meta:
         ordering = ['name']
         permissions = [
-            ("can_add_appointment", "Can add appointment"),
+            ("can_update_patient", "Update patient details"),
+            ("can_delete_patient", "Delete patient"),
+            ("can_view_patient", "View patient details"),
+            ("can_create_patient", "Create patient"),
+            ("can_view_all therapists", "View all therapists"),
+
         ]
 
     def __str__(self):

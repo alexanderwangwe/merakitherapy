@@ -2,24 +2,20 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+    
     <h1>Therapist List</h1>
     <br/>
-    
     <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Action</th>
-            </tr>
-        </thead>
         <tbody>
             {% for therapist in therapists %}
                 <tr>
                     <td>
                         <a href="{% url 'catalog:therapist_detail' therapist.pk %}">{{ therapist.name }}</a>
                     </td>
-                    <td>
+                    <td style="text-align: right;">
                         <a class="btn btn-primary" href="{% url 'catalog:update_therapist' therapist.pk %}">Update</a>
+                    </td>
+                    <td style="text-align: right;">
                         <a class="btn btn-danger" href="{% url 'catalog:therapist_delete' therapist.pk %}">Delete</a>
                     </td>
                 </tr>

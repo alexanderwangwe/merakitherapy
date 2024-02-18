@@ -4,7 +4,6 @@
 {% block content %}
     <h1>Patient List</h1>
     <br/>
-    
     <table>
         {% for patient in patients %}
             <tr>
@@ -15,7 +14,7 @@
                     <a class="btn btn-primary" href="{% url 'catalog:update_patient' patient.pk %}">Update</a>
                 </td>
                 <td style="text-align: right;">
-                    <a class="btn btn-primary" href="{% url 'catalog:patient_delete' patient.pk %}">Delete</a>
+                    <a class="btn btn-danger" href="{% url 'catalog:patient_delete' patient.pk %}">Delete</a>
                 </td>
             </tr>
         {% endfor %}

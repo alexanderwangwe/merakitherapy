@@ -1,6 +1,4 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.models import User
-from django.core.exceptions import MultipleObjectsReturned
 from django.db import models
 from django.db.models import Count, Avg
 from django.shortcuts import render, redirect, get_object_or_404
@@ -51,38 +49,12 @@ def login_user(request):
         return render(request, 'registration/login.html', {})
 
 
+# TODO: fix the logout view
 def logout_user(request):
     if request.method == 'POST':
         logout(request)
     messages.success(request, 'You have been logged out.')
     return redirect('index')
-
-
-class MyView(PermissionRequiredMixin, View):
-    permission_required = 'catalog.can_add_appointment'
-    # Or multiple of permissions:
-    # permission_required = ('catalog.can_add_appointment', 'catalog.can_edit_appointment')
-    # Note that 'catalog.can_add_appointment' is the permission name, not the friendly name.
-    # If you want to use the friendly name, you can use the permission's codename instead:
-    # permission_required = ('catalog.add_appointment', 'catalog.change_appointment')
-    # The permission_required attribute can also be a callable, which should return a list or tuple of permission names.
-    # permission_required = lambda request: ('catalog.can_add_appointment', 'catalog.can_edit_appointment')
-    raise_exception = True
-    # If True (the default), the user will be redirected to the login page if not logged in.
-    # If False, the user will be denied access if not logged in.
-    # If True and the user is logged in, the user will be shown a 403 Forbidden page.
-    # If False and the user is logged in, the user will be shown the view but the user has no permission.
-    return_403 = False
-
-    # If True, the user will be shown a 403 Forbidden page.
-    # If False (the default), the user will be shown the login page.
-
-    # The permission_required attribute can also be a callable, which should return a list or tuple of permission names.
-    # permission_required = lambda request: ('catalog.can_add_appointment', 'catalog.can_edit_appointment')
-
-    def get(self, request):
-        # <view logic>
-        pass
 
 
 class AppointmentListView(generic.ListView):

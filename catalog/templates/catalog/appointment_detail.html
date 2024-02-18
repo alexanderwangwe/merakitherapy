@@ -9,13 +9,12 @@
     <p>Patient: {{ appointment.patient.name }}</p>
     <p>Status: {{ appointment.status }}</p>
 
- <span style="">
-        <a href="{% url 'catalog:update_appointment' appointment.pk %}">Update</a>
+    <span>
+        <a href="{% url 'catalog:update_appointment' appointment.pk %}" class="btn btn-primary">Update</a>
     </span>
 
-    <span style="margin-right: 10px;">        
-<a href="{% url 'catalog:delete_appointment' appointment_id=appointment.pk %}">Delete</a>
+    <span style="margin-right: 10px;">
+        <a href="{% url 'catalog:delete_appointment' appointment_id=appointment.pk %}" class="btn btn-danger">Delete</a>
     </span>
 
 {% endblock %}
-   
