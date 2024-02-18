@@ -84,6 +84,8 @@ USE_TZ = True
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 LOGIN_REDIRECT_URL = '/'
+# Redirect to home URL after logout
+LOGOUT_REDIRECT_URL = 'index'
 
 # Static files (CSS, JavaScript, Images)
 # The absolute path to the directory where collectstatic will collect static files for deployment.

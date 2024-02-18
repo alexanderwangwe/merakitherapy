@@ -52,7 +52,8 @@ def login_user(request):
 
 
 def logout_user(request):
-    logout(request)
+    if request.method == 'POST':
+        logout(request)
     messages.success(request, 'You have been logged out.')
     return redirect('index')
 
@@ -164,6 +165,27 @@ def patient_registration(request):
     return render(request, 'catalog/patient_registration.html', {'form': form})
 
 
+# delete and update patients
+def update_patient(request, patient_id):
+    patient = get_object_or_404(Patient, pk=patient_id)
+
+    if request.method == 'POST':
+        form = PatientRegistrationForm(request.POST, instance=patient)
+        if form.is_valid():
+            form.save()
+            return redirect('patient-detail', patient_id=patient.pk)
+    else:
+        form = PatientRegistrationForm(instance=patient)
+
+    return render(request, 'catalog/patient_registration.html', {'form': form})
+
+
+def patient_delete(request, patient_id):
+    patient = Patient.objects.get(pk=patient_id)
+    patient.delete()
+    return redirect('catalog:patient_list')
+
+
 def therapist_registration(request):
     if request.method == 'POST':
         form = TherapistRegistrationForm(request.POST)
@@ -176,6 +198,27 @@ def therapist_registration(request):
         form = TherapistRegistrationForm()
 
     return render(request, 'catalog/therapist_registration.html', {'form': form})
+
+
+# delete and update therapists
+def update_therapist(request, therapist_id):
+    therapist = get_object_or_404(Therapist, pk=therapist_id)
+
+    if request.method == 'POST':
+        form = TherapistRegistrationForm(request.POST, instance=therapist)
+        if form.is_valid():
+            form.save()
+            return redirect('therapist-detail', patient_id=therapist.pk)
+    else:
+        form = TherapistRegistrationForm(instance=therapist)
+
+    return render(request, 'catalog/therapist_registration.html', {'form': form})
+
+
+def therapist_delete(request, therapist_id):
+    therapist = Therapist.objects.get(pk=therapist_id)
+    therapist.delete()
+    return redirect('catalog:therapist_list')
 
 
 def create_appointment(request):
@@ -194,26 +237,21 @@ def create_appointment(request):
 
 
 # update and delete appointments
-def appointment_update_view(request, pk):
-    appointment = get_object_or_404(Appointment, pk=pk)
+def update_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, pk=appointment_id)
 
     if request.method == 'POST':
         form = AppointmentForm(request.POST, instance=appointment)
         if form.is_valid():
             form.save()
-            return redirect('catalog:appointment_detail', pk=appointment.pk)
+            return redirect('appointment-detail', appointment_id=appointment.pk)
     else:
         form = AppointmentForm(instance=appointment)
 
-    return render(request, 'catalog/appointment_list.html', {'form': form})
+    return render(request, 'catalog/create_appointment.html', {'form': form})
 
 
-def appointment_delete_view(request, pk):
-    appointment = get_object_or_404(Appointment, pk=pk)
-
-    if request.method == 'POST':
-        appointment.delete()
-        return redirect('catalog:appointment_list')  # Redirect to the appropriate page after deletion
-
-    return render(request, 'catalog/appointment_detail.html', {'appointment': appointment})
-
+def appointment_delete(request, appointment_id):
+    appointment = Appointment.objects.get(pk=appointment_id)
+    appointment.delete()
+    return redirect('catalog:appointment_list')

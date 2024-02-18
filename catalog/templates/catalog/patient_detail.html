@@ -10,4 +10,11 @@
 <p>Contact: {{ patient.contact }}</p>
 <p>Appointment: {{ patient.appointment.date }} - {{ patient.appointment.time }}</p>
 
+    <span style="">
+        <a href="{% url 'catalog:update_patient' patient.pk %}">Update</a>
+    </span>
+
+    <span style="margin-right: 10px;">        
+<a href="{% url 'catalog:patient_delete' patient_id=patient.pk %}">Delete</a>
+    </span>
 {% endblock %}

@@ -1,18 +1,29 @@
+<!-- catalog/appointment_list.html -->
 {% extends "base_generic.html" %}
 
 {% block content %}
     <h1>Appointment List</h1>
-        <ul>
-          {% for appointment in appointments %}
-            <li>
-                {% if appointment.therapist %}
-                    <a href="{% url 'catalog:appointment_detail' appointment.pk %}">
-                        {{ appointment.therapist.name }} - {{ appointment.date }} - {{ appointment.time }}
-                    </a>
-                {% else %}
-                    Unassigned - {{ appointment.date }} - {{ appointment.time }}
-                {% endif %}
-            </li>
+    <br/>
+    
+    <table>
+        {% for appointment in appointments %}
+            <tr>
+                <td>
+                    {% if appointment.therapist %}
+                        <a href="{% url 'catalog:appointment_detail' appointment.pk %}">
+                            {{ appointment.therapist.name }} - {{ appointment.date }} - {{ appointment.time }}
+                        </a>
+                    {% else %}
+                        Unassigned - {{ appointment.date }} - {{ appointment.time }}
+                    {% endif %}
+                </td>
+                <td style="text-align: right;">
+                    <a class="btn btn-primary" href="{% url 'catalog:update_appointment' appointment.pk %}">Update</a>
+                </td>
+                <td style="text-align: right;">
+                    <a class="btn btn-danger" href="{% url 'catalog:delete_appointment' appointment.pk %}">Delete</a>
+                </td>
+            </tr>
         {% endfor %}
-        </ul>
+    </table>
 {% endblock %}
