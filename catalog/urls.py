@@ -1,7 +1,5 @@
-from django.contrib.auth.views import LogoutView
 from django.urls import path, include
 from . import views
-from .views import update_patient, update_appointment
 
 app_name = 'catalog'
 
